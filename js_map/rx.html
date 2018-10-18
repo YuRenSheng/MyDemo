@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>RX.js</title>
+
+</head>
+
+<body>
+  <div id="kb">
+    <button type="button" name="button">TEST</button>
+
+    <video width="320" height="240" controls autoplay>
+  <source src="../img/video/c05680ym8lq.mp4" type="video/mp4">
+  <!-- <source src="movie.ogg" type="video/ogg">
+  <source src="movie.webm" type="video/webm"> -->
+  您的浏览器不支持 video 属性。
+</video>
+  </div>
+</body>
+<script src="../js/rx.js"></script>
+<script type="text/javascript">
+  (function modeo() {
+    //這是string的轉譯方法
+    // String.fromCharCode(8194).repeat(len);
+
+
+    // var button = document.querySelector('button');
+    // Rx.Observable.fromEvent(button, 'click')
+    //   .subscribe(() => console.log('Clicked!'));
+
+    // var count = 0;
+    // var button = document.querySelector('button');
+    // button.addEventListener('click', () => console.log(`Clicked ${++count} times`));
+
+    // var button = document.querySelector('button');
+    // Rx.Observable.fromEvent(button, 'click')
+    //   .scan(count => count + 1, 0)　 //這是能產生一個自變量的方法
+    //   .subscribe(count => console.log(`Clicked ${count} times`));
+
+    // var button = document.querySelector('button');
+    // Rx.Observable.fromEvent(button, 'click')
+    //   .throttleTime(1000) //這是限時的操作
+    //   .scan(count => count + 1, 0)
+    //   .subscribe(count => console.log(`Clicked ${count} times`));
+
+    var button = document.querySelector('button');
+    Rx.Observable.fromEvent(button, 'click')
+      .throttleTime(1000)
+      .map(event => event.clientX)
+      .scan((count, clientX) => count + clientX, 0)
+      .subscribe(count => console.log(count));
+
+    //用.create創建了observable對象 需要訂閱才能看得到數據
+    var observable = Rx.Observable.create(function(observer) {
+      observer.next(1);
+      tt(function(d){
+        observer.next(d);
+      });
+
+      observer.next(3);
+      setTimeout(() => {
+        observer.next(4);
+        // observer.complete();
+      }, 900);
+    });
+
+    function tt(callback){
+      setTimeout(() => {
+        console.log(22);
+        callback(2)
+      }, 1000);
+    }
+    //訂閱操作.subscribe
+    console.log('just before subscribe');
+    observable.subscribe({
+      next: x => console.log('got value ' + x),
+      error: err => console.error('something wrong occurred: ' + err),
+      complete: () => console.log('done'),
+    });
+    console.log('just after subscribe');
+
+
+  })()
+</script>
+
+</html>
